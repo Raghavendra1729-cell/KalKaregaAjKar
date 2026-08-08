@@ -2,7 +2,7 @@ export type Phase = "warm_up" | "exercise" | "stretching";
 export type DayType = "workout" | "rest";
 
 export type GymCsvRow = {
-  week_start: string;
+  plan_start: string;
   date: string;
   day_type: DayType;
   title: string | null;

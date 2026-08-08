@@ -19,7 +19,10 @@ export async function GET() {
     to_char(study_reminder_time, 'HH24:MI') as study_reminder_time,
     gym_reminder_enabled, gym_reminder_day, to_char(gym_reminder_time, 'HH24:MI') as gym_reminder_time,
     timezone from notification_settings where id = 1`;
-  return Response.json({ settings });
+  return Response.json({
+    settings,
+    vapid_public_key: process.env.VAPID_PUBLIC_KEY ?? null,
+  });
 }
 
 export async function PUT(request: Request) {
@@ -32,5 +35,7 @@ export async function PUT(request: Request) {
       gym_reminder_enabled = ${value.gym_reminder_enabled}, gym_reminder_day = ${value.gym_reminder_day},
       gym_reminder_time = ${value.gym_reminder_time}, timezone = ${value.timezone}, updated_at = now() where id = 1`;
     return Response.json({ ok: true });
-  } catch (error) { return errorResponse(error); }
+  } catch (error) {
+    return errorResponse(error);
+  }
 }

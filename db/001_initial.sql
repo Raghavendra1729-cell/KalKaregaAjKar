@@ -23,7 +23,7 @@ create index if not exists study_tasks_plan_date_idx on study_tasks(plan_date, s
 
 create table if not exists workout_weeks (
   id uuid primary key default gen_random_uuid(),
-  week_start date not null unique,
+  plan_start date not null unique,
   name text,
   imported_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -78,7 +78,7 @@ create table if not exists workout_item_progress (
 
 create table if not exists progress_photos (
   id uuid primary key default gen_random_uuid(),
-  week_start date not null unique,
+  plan_start date not null unique,
   mime_type text not null check (mime_type in ('image/jpeg', 'image/png', 'image/webp')),
   image_data bytea not null,
   byte_size integer not null check (byte_size between 1 and 2097152),

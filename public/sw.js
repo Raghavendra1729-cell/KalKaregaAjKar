@@ -1,8 +1,8 @@
-const CACHE = "kal-karega-shell-v1";
-const SHELL = ["/study", "/gym", "/manifest.webmanifest"];
+const CACHE = "kal-karega-public-v2";
+const PUBLIC_ASSETS = ["/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL)).catch(() => undefined));
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(PUBLIC_ASSETS)).catch(() => undefined));
   self.skipWaiting();
 });
 
@@ -12,8 +12,10 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET" || new URL(event.request.url).origin !== location.origin) return;
-  event.respondWith(fetch(event.request).catch(() => caches.match(event.request).then((response) => response || caches.match("/study"))));
+  if (event.request.method !== "GET") return;
+  const url = new URL(event.request.url);
+  if (url.origin !== location.origin || !PUBLIC_ASSETS.includes(url.pathname)) return;
+  event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request)));
 });
 
 self.addEventListener("push", (event) => {

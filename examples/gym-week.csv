@@ -1,9 +1,14 @@
-week_start,date,day_type,title,phase,order,exercise_name,sets,reps,weight_kg,duration_seconds,rest_seconds,sides,notes
-2026-08-10,2026-08-10,workout,Push day,warm_up,1,Treadmill,,,,300,,,Easy pace
-2026-08-10,2026-08-10,workout,Push day,exercise,1,Bench press,3,10,30,,90,,
-2026-08-10,2026-08-10,workout,Push day,exercise,2,Shoulder press,3,12,12.5,,75,,
-2026-08-10,2026-08-10,workout,Push day,stretching,1,Doorway chest stretch,,,,30,,2,30 seconds per side
-2026-08-10,2026-08-11,rest,Recovery,,,,,,,,,,Walk if you feel like it
-2026-08-10,2026-08-12,workout,Pull day,warm_up,1,Arm circles,2,15,,,,,
-2026-08-10,2026-08-12,workout,Pull day,exercise,1,Lat pulldown,3,12,35,,75,,
-2026-08-10,2026-08-12,workout,Pull day,stretching,1,Child pose,,,,45,,1,
+plan_start,date,day_type,title,phase,order,exercise_name,sets,reps,weight_kg,duration_seconds,rest_seconds,sides,notes
+2026-08-12,2026-08-12,workout,Push day,warm_up,1,Treadmill,,,,300,,,Easy pace
+2026-08-12,2026-08-12,workout,Push day,exercise,1,Bench press,3,10,30,,90,,
+2026-08-12,2026-08-12,workout,Push day,stretching,1,Doorway chest stretch,,,,30,,2,30 seconds per side
+2026-08-12,2026-08-13,rest,Recovery,,,,,,,,,,Sleep well
+2026-08-12,2026-08-14,workout,Pull day,warm_up,1,Arm circles,2,15,,,,,
+2026-08-12,2026-08-14,workout,Pull day,exercise,1,Lat pulldown,3,12,35,,75,,
+2026-08-12,2026-08-14,workout,Pull day,stretching,1,Child pose,,,,45,,1,
+2026-08-12,2026-08-15,rest,Recovery,,,,,,,,,,Easy walk
+2026-08-12,2026-08-16,workout,Leg day,warm_up,1,Bodyweight squat,2,12,,,,,
+2026-08-12,2026-08-16,workout,Leg day,exercise,1,Goblet squat,3,10,16,,90,,
+2026-08-12,2026-08-16,workout,Leg day,stretching,1,Hip flexor stretch,,,,30,,2,
+2026-08-12,2026-08-17,rest,Recovery,,,,,,,,,,Hydrate
+2026-08-12,2026-08-18,rest,Full rest,,,,,,,,,,Prepare next plan

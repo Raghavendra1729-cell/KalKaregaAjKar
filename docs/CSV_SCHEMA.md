@@ -1,62 +1,87 @@
-# CSV schemas
+# Copy-ready CSV schemas
 
-Both import screens always show a preview. Fix cells in the preview before saving, or save and edit the plan later. Empty optional cells remain `null` and are never shown in the workout/task UI.
+The Study and Gym importers accept either a `.csv` file or CSV text pasted directly into the app. Both show an editable preview before saving. Leave optional cells empty—do not write `null`, `N/A`, or `-`. Empty values are stored as `null` and hidden in the daily user interface.
 
-## Gym weekly CSV
+## Gym: one seven-day weekly plan
 
-Upload one Monday-to-Sunday week at a time. Download/copy [the complete example](../examples/gym-week.csv).
+A Gym plan always covers exactly seven consecutive calendar dates, but it may start on any day. For example, a plan can start on Wednesday and finish on Tuesday. Every date must be represented by at least one workout row or exactly one rest row.
+
+Exact header:
 
 ```csv
-week_start,date,day_type,title,phase,order,exercise_name,sets,reps,weight_kg,duration_seconds,rest_seconds,sides,notes
-2026-08-10,2026-08-10,workout,Push day,warm_up,1,Treadmill,,,,300,,,Easy pace
-2026-08-10,2026-08-10,workout,Push day,exercise,1,Bench press,3,10,30,,90,,
-2026-08-10,2026-08-10,workout,Push day,stretching,1,Doorway chest stretch,,,,30,,2,30 seconds per side
-2026-08-10,2026-08-11,rest,Recovery,,,,,,,,,,Sleep well
+plan_start,date,day_type,title,phase,order,exercise_name,sets,reps,weight_kg,duration_seconds,rest_seconds,sides,notes
 ```
 
-| Column | Required | Meaning |
-| --- | --- | --- |
-| `week_start` | Yes | Monday of the uploaded week, `YYYY-MM-DD`. Every row must match. |
-| `date` | Yes | Planned calendar day, `YYYY-MM-DD`, inside that week. |
-| `day_type` | Yes | `workout` or `rest`. A rest day needs only the date, type, and optional title/notes. |
-| `title` | No | Day label such as `Push day` or `Recovery`. |
-| `phase` | Workout rows | `warm_up`, `exercise`, or `stretching`. |
-| `order` | Workout rows | Position within its phase, starting at `1`. |
-| `exercise_name` | Workout rows | What to do. |
-| `sets` | No | Number of sets. Blank means one pass and the UI hides the sets label. |
-| `reps` | Conditional | Repetitions per set. Supply `reps`, `duration_seconds`, or both. |
-| `weight_kg` | No | Weight in kilograms. `0` is allowed for bodyweight; blank hides weight entirely. |
-| `duration_seconds` | Conditional | Countdown for a timed movement or hold. With `sides=2`, it applies per side. |
-| `rest_seconds` | No | Countdown after a completed set. Blank means no rest timer. |
-| `sides` | No | Usually `2` for left/right stretching. Blank means not side-specific. |
-| `notes` | No | Short technique or pace cue. |
+Use [the complete midweek example](../examples/gym-week.csv), or copy the AI prompt from the Gym page.
 
-Rules:
+| Column             | Required     | Meaning                                                                                                 |
+| ------------------ | ------------ | ------------------------------------------------------------------------------------------------------- |
+| `plan_start`       | Yes          | First date of this seven-day plan, `YYYY-MM-DD`; identical on every row. It does not need to be Monday. |
+| `date`             | Yes          | One of the seven dates from `plan_start` through `plan_start + 6 days`.                                 |
+| `day_type`         | Yes          | `workout` or `rest`. Never mix both types on one date.                                                  |
+| `title`            | No           | Day label such as `Push day` or `Recovery`.                                                             |
+| `phase`            | Workout rows | `warm_up`, `exercise`, or `stretching`. Blank on rest rows.                                             |
+| `order`            | Workout rows | Position within the phase, starting at `1`; each phase/order pair must be unique for that date.         |
+| `exercise_name`    | Workout rows | Movement name.                                                                                          |
+| `sets`             | No           | Planned sets. Blank means one pass.                                                                     |
+| `reps`             | Conditional  | Repetitions per set. Supply `reps`, `duration_seconds`, or both.                                        |
+| `weight_kg`        | No           | Weight in kilograms. `0` is valid; blank hides weight.                                                  |
+| `duration_seconds` | Conditional  | Movement or hold countdown.                                                                             |
+| `rest_seconds`     | No           | Rest countdown after a set.                                                                             |
+| `sides`            | No           | Usually `2` for left/right movements.                                                                   |
+| `notes`            | No           | Short pace, technique, or recovery cue.                                                                 |
 
-- Use one row per exercise/movement and one row for each rest day.
-- An exercise may be manual (`sets + reps + weight`), timed (`duration_seconds`), or mixed.
-- Warm-up and stretching use the same columns, so the schema does not break when one uses reps and another uses a hold timer.
-- Do not write the word `null`; leave the cell empty.
-- Re-uploading the same `week_start` replaces that week only after the preview is confirmed.
+Workout rows can be rep-based, timer-based, or both. A rest day has one row and leaves movement fields empty. Re-uploading the same `plan_start` updates that plan after preview; saved plans can also be loaded and edited later.
 
-## Study nightly CSV
+### Prompt for an AI agent
 
-Upload only one date at a time—the plan you prepare the previous night. Download/copy [the complete example](../examples/study-day.csv).
+The app has a **Copy AI prompt** button. You can also copy this directly:
+
+```text
+Create my next seven-day gym plan as CSV only.
+
+The plan may begin on ANY date; it does not need to be Monday. Use exactly these columns in this order:
+plan_start,date,day_type,title,phase,order,exercise_name,sets,reps,weight_kg,duration_seconds,rest_seconds,sides,notes
+
+Use the same plan_start on every row. Include all 7 consecutive dates. day_type is workout or rest. A rest day has exactly one row with movement fields empty. A workout has one row per movement. phase is warm_up, exercise, or stretching. order starts at 1 within each phase and date. Every workout movement needs exercise_name and at least reps or duration_seconds. Numeric fields contain numbers only. Leave optional values empty; never write null, N/A, or '-'. Quote fields only when they contain a comma. Return raw CSV only with no Markdown fence or explanation.
+
+My plan should start on: [YYYY-MM-DD]
+My goal, constraints, and equipment: [WRITE HERE]
+```
+
+## Study: one independent day
+
+Study is not weekly. Create or upload one chosen date at a time: today in the morning, tomorrow the night before, or any other day selected from the calendar.
+
+Exact header:
 
 ```csv
 date,order,task,group,duration_minutes,notes
-2026-08-09,1,Solve two DP problems,CSES,60,Start with one-dimensional DP
-2026-08-09,2,Review database indexes,Khaao,35,
-2026-08-09,3,Read operating systems notes,College,,Chapter 4
 ```
 
-| Column | Required | Meaning |
-| --- | --- | --- |
-| `date` | Yes | Day you will do the task, `YYYY-MM-DD`. All rows must use the same date. |
-| `order` | Yes | Task order, starting at `1`. |
-| `task` | Yes | Clear task name. |
-| `group` | No | Subject/project such as `CSES`, `College`, or `Khaao`. `Gym` is reserved and rejected in the UI. |
-| `duration_minutes` | No | Optional focus-timer length. Blank hides the timer. |
-| `notes` | No | Small success criterion or reminder. |
+Use [the complete daily example](../examples/study-day.csv), or copy the AI prompt from the Study page.
 
-Study history is stored per date, including task completion. Uploading a date again previews a replacement; nothing from another date is changed.
+| Column             | Required | Meaning                                                                                                  |
+| ------------------ | -------- | -------------------------------------------------------------------------------------------------------- |
+| `date`             | Yes      | The single day the tasks belong to, `YYYY-MM-DD`; every row must match.                                  |
+| `order`            | Yes      | Unique task order starting at `1`.                                                                       |
+| `task`             | Yes      | A clear, finishable task.                                                                                |
+| `group`            | No       | Subject/project such as `CSES`, `College`, or `Khaao`. `Gym` is rejected because it has its own section. |
+| `duration_minutes` | No       | Focus timer length; blank hides the timer.                                                               |
+| `notes`            | No       | Short success condition or reminder.                                                                     |
+
+Saving a date replaces only that date's Study plan. Completion and history remain organized by calendar date.
+
+### Prompt for an AI agent
+
+```text
+Create my Study plan as CSV only.
+
+Use exactly these columns in this order:
+date,order,task,group,duration_minutes,notes
+
+Use one date only in YYYY-MM-DD. This can be today's plan written in the morning, tomorrow's plan written the night before, or another chosen date. order starts at 1 and is unique. task is required and finishable. group is optional, but never use Gym because Gym has its own section. duration_minutes and notes are optional. Leave optional values empty; never write null, N/A, or '-'. Quote fields only when they contain a comma. Return raw CSV only with no Markdown fence or explanation.
+
+Plan date: [YYYY-MM-DD]
+What I need to study: [WRITE HERE]
+```

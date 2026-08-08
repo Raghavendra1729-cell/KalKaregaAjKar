@@ -45,9 +45,9 @@ For background reminders:
 
 The service worker never caches password-protected Study or Gym pages.
 
-## RunOnFlux Orbit deployment
+## RunOnFlux Orbit deployment (alternative)
 
-Orbit is the current container-hosting target. Open [Orbit Deploy](https://orbit.runonflux.com/dashboard/deploy), connect this public repository, and use the repository root:
+Orbit remains an alternative container-hosting target. Open [Orbit Deploy](https://orbit.runonflux.com/dashboard/deploy), connect this public repository, and use the repository root:
 
 ```text
 Repository: https://github.com/Raghavendra1729-cell/KalKaregaAjKar
@@ -146,6 +146,8 @@ HEALTHCHECK_URL=https://<project>.vercel.app/api/health
 ```
 
 Every push to `main` will deploy automatically after the repository is connected to Vercel. `daily-health.yml` pings app/database health every day at 03:17 UTC. `run-reminders.yml` invokes notification processing at minute 23 of every hour. GitHub schedules use UTC and can be delayed during high load.
+
+Do not add an hourly entry to `vercel.json` on the Hobby plan. Vercel Hobby only permits schedules that run once per day, so the repository deliberately contains no Vercel Cron configuration. Hourly reminders are handled by `.github/workflows/run-reminders.yml`, which calls the same `CRON_SECRET`-protected endpoint from GitHub Actions.
 
 The existing Dockerfile is retained for local testing and other container hosts, but Vercel does not use it.
 

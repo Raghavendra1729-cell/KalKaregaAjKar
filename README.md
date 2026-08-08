@@ -45,6 +45,59 @@ For background reminders:
 
 The service worker never caches password-protected Study or Gym pages.
 
+## RunOnFlux Orbit deployment
+
+Orbit is the current container-hosting target. Open [Orbit Deploy](https://orbit.runonflux.com/dashboard/deploy), connect this public repository, and use the repository root:
+
+```text
+Repository: https://github.com/Raghavendra1729-cell/KalKaregaAjKar
+Branch: main
+Project path: <leave empty>
+App port: 3000
+Health check path: /api/health
+```
+
+Orbit detects Node.js and Next.js from `package.json`. If the wizard exposes advanced build fields, use:
+
+```text
+Install command: npm ci --include=dev
+Build command: npm run build
+Run command: npm start
+```
+
+The start script binds to `0.0.0.0` and uses Orbit's `APP_PORT`, with `PORT` and `3000` as fallbacks. `pre-deploy.sh` runs the idempotent PostgreSQL migrations before each Orbit build.
+
+Add these values using Orbit's **Secrets** controls, not as public/plain component environment variables:
+
+```text
+APP_PASSWORD=<your private app password>
+SESSION_SECRET=<different random string, at least 32 characters>
+DATABASE_URL=<Supabase transaction-pooler URL including sslmode=require>
+CRON_SECRET=<another long random string>
+VAPID_PRIVATE_KEY=<generated private key; optional>
+```
+
+Add these non-secret environment variables:
+
+```text
+VAPID_PUBLIC_KEY=<matching generated public key; optional>
+VAPID_SUBJECT=mailto:<your-email>
+```
+
+Do not enter secrets into a field that says they will be public. Orbit advertises runtime secret injection, while the lower-level non-Enterprise FluxCloud component form warns that plain environment variables can be visible through its public API. If the wizard does not give you a distinct protected **Secrets** control, stop instead of pasting `APP_PASSWORD`, `SESSION_SECRET`, `DATABASE_URL`, `CRON_SECRET`, or `VAPID_PRIVATE_KEY`.
+
+Start with Orbit's Free plan (0.5 CPU, 1 GB RAM, 5 GB storage, one instance). If the build log reports an out-of-memory error or exit code 137, choose the 4 GB Standard plan; Orbit's documentation recommends 3–4 GB for typical Next.js dashboards. Application state remains in Supabase, so the container needs no persistent volume.
+
+After deployment, open `https://<orbit-app-domain>/api/health`. Then set these GitHub Actions values so health monitoring and reminders call Orbit:
+
+```text
+Repository variable APP_URL=https://<orbit-app-domain>
+Repository variable HEALTHCHECK_URL=https://<orbit-app-domain>/api/health
+Repository secret CRON_SECRET=<same value stored in Orbit>
+```
+
+Orbit connects its own push webhook during repository setup, so every push to `main` should rebuild automatically. Do not add polling or a second webhook unless the dashboard reports that automatic deployments are disabled.
+
 ## Vercel deployment
 
 Import this GitHub repository into a Vercel **Hobby** project. Vercel detects Next.js automatically; keep the root directory as the repository root and leave the framework, install, build, and output settings on their defaults. The repository pins Node.js 22 for builds and functions.

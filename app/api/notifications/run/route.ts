@@ -1,6 +1,8 @@
 import webpush from "web-push";
 import { db } from "@/lib/db";
 
+export const maxDuration = 60;
+
 function localParts(timeZone: string) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone,

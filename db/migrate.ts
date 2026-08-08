@@ -1,6 +1,9 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { loadEnvConfig } from "@next/env";
 import postgres from "postgres";
+
+loadEnvConfig(process.cwd());
 
 async function main() {
   const databaseUrl = process.env.DATABASE_URL;

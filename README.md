@@ -1,13 +1,3 @@
----
-title: Kal Karega Aaj Kar
-emoji: ✅
-colorFrom: green
-colorTo: orange
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # Kal Karega, Aaj Kar
 
 A private, installable, mobile-first app with exactly two separate sections:
@@ -25,7 +15,7 @@ Requirements: Node.js 22 and PostgreSQL (or Docker).
 cp .env.example .env.local
 docker compose up -d
 npm install
-set -a && source .env.local && set +a && npm run db:migrate
+npm run db:migrate
 npm run dev
 ```
 
@@ -55,47 +45,56 @@ For background reminders:
 
 The service worker never caches password-protected Study or Gym pages.
 
-## Hugging Face Spaces deployment
+## Vercel deployment
 
-Create a **Docker Space** and connect Supabase Postgres. A public Space is simplest for scheduled health/reminder calls; the app itself still exposes no Study or Gym content without `APP_PASSWORD`. Add these under the Space **Settings** page:
+Import this GitHub repository into a Vercel **Hobby** project. Vercel detects Next.js automatically; keep the root directory as the repository root and leave the framework, install, build, and output settings on their defaults. The repository pins Node.js 22 for builds and functions.
 
-Space Secrets:
+Add the following under **Project → Settings → Environment Variables** and select **Production**. The app reads the VAPID public key through an authenticated API response, so it intentionally remains named `VAPID_PUBLIC_KEY` rather than using a `NEXT_PUBLIC_` prefix.
+
+Required secrets:
 
 ```text
 APP_PASSWORD=<your private app password>
 SESSION_SECRET=<different random string, at least 32 characters>
-DATABASE_URL=<Supabase Postgres connection string including sslmode=require>
+DATABASE_URL=<Supabase transaction-pooler connection string including sslmode=require>
 CRON_SECRET=<another long random string>
-VAPID_PRIVATE_KEY=<generated private key; optional if reminders are disabled>
 ```
 
-Space Variables:
+Optional Web Push values:
 
 ```text
-VAPID_PUBLIC_KEY=<generated public key; optional>
+VAPID_PUBLIC_KEY=<generated public key>
+VAPID_PRIVATE_KEY=<matching generated private key>
 VAPID_SUBJECT=mailto:<your-email>
 ```
 
-Do not add secrets to `.env` files or Git. The Docker container listens on port `7860`, runs all numbered database migrations before startup, uses the non-root Node user (UID 1000), and exposes `/api/health` for app/database health.
+Do not paste secret values into source files or commit `.env.local`. Apply the numbered database migrations from your computer before using the deployment:
 
-For automatic deployment from this GitHub repository, configure:
+```bash
+npm install
+npm run db:migrate
+```
+
+The migration command loads `.env.local` automatically. Vercel does not use the Docker startup command, so migrations are deliberately kept separate from the Vercel build: preview builds must never mutate the production database.
+
+After the first production deployment, verify `https://<project>.vercel.app/api/health` returns an `ok` status. Then configure the reminder and health workflows in this GitHub repository:
 
 GitHub repository secrets:
 
 ```text
-HF_TOKEN=<fine-grained Hugging Face token with write access to the Space>
 CRON_SECRET=<same value used by the Space>
 ```
 
 GitHub repository variables:
 
 ```text
-HF_SPACE_ID=<Hugging Face username/space-name>
-APP_URL=https://<username>-<space-name>.hf.space
-HEALTHCHECK_URL=https://<username>-<space-name>.hf.space/api/health
+APP_URL=https://<project>.vercel.app
+HEALTHCHECK_URL=https://<project>.vercel.app/api/health
 ```
 
-Then push `main` or manually run **Sync Hugging Face Space**. `daily-health.yml` pings app/database health every day at 03:17 UTC. `run-reminders.yml` invokes notification processing at minute 23 of every hour. GitHub schedules use UTC and can be delayed during high load.
+Every push to `main` will deploy automatically after the repository is connected to Vercel. `daily-health.yml` pings app/database health every day at 03:17 UTC. `run-reminders.yml` invokes notification processing at minute 23 of every hour. GitHub schedules use UTC and can be delayed during high load.
+
+The existing Dockerfile is retained for local testing and other container hosts, but Vercel does not use it.
 
 ## Verification without browser automation
 

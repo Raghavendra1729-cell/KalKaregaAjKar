@@ -1,0 +1,25 @@
+name: Run notification reminders
+
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  remind:
+    if: ${{ vars.APP_URL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run the protected reminder endpoint
+        env:
+          APP_URL: ${{ vars.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          test -n "$APP_URL"
+          test -n "$CRON_SECRET"
+          curl --fail --silent --show-error --retry 2 --max-time 45 \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -X POST "${APP_URL%/}/api/notifications/run"

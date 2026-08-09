@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "plan_start": "2026-08-10",
+  "days": [
+    {
+      "date": "2026-08-10",
+      "day_type": "workout",
+      "title": "Push day",
+      "notes": "Controlled working sets with clean technique.",
+      "exercises": [
+        {
+          "name": "Jump rope",
+          "phase": "warm_up",
+          "order": 1,
+          "sets": [{ "reps": null, "weight_kg": null, "duration_seconds": 180, "sides": 1 }],
+          "rest_between_sets_seconds": 0,
+          "rest_after_exercise_seconds": 30,
+          "equipment": ["Jump rope"],
+          "instructions": ["Stay light on the feet.", "Turn the rope from the wrists."],
+          "coaching_cue": "Use an easy pace.",
+          "substitution": "March quickly in place.",
+          "safety_note": null
+        },
+        {
+          "name": "Bench press",
+          "phase": "exercise",
+          "order": 1,
+          "sets": [
+            { "reps": 10, "weight_kg": 30, "duration_seconds": null, "sides": 1 },
+            { "reps": 10, "weight_kg": 30, "duration_seconds": null, "sides": 1 },
+            { "reps": 10, "weight_kg": 30, "duration_seconds": null, "sides": 1 }
+          ],
+          "rest_between_sets_seconds": 90,
+          "rest_after_exercise_seconds": 120,
+          "equipment": ["Barbell", "Bench"],
+          "instructions": ["Plant both feet.", "Pull the shoulder blades down and back.", "Lower to mid-chest and press while exhaling."],
+          "coaching_cue": "Keep wrists stacked over elbows.",
+          "substitution": "Dumbbell bench press.",
+          "safety_note": "Use a spotter for challenging sets."
+        },
+        {
+          "name": "Doorway chest stretch",
+          "phase": "stretching",
+          "order": 1,
+          "sets": [{ "reps": null, "weight_kg": null, "duration_seconds": 30, "sides": 2 }],
+          "rest_between_sets_seconds": 0,
+          "rest_after_exercise_seconds": 0,
+          "equipment": ["Doorway"],
+          "instructions": ["Step through gently and keep the ribs down."],
+          "coaching_cue": "Breathe without forcing the range.",
+          "substitution": null,
+          "safety_note": "Stop before shoulder pain."
+        }
+      ]
+    },
+    { "date": "2026-08-11", "day_type": "rest", "title": "Recovery", "notes": "Walk and sleep well.", "exercises": [] },
+    { "date": "2026-08-12", "day_type": "rest", "title": "Recovery", "notes": null, "exercises": [] },
+    { "date": "2026-08-13", "day_type": "rest", "title": "Recovery", "notes": null, "exercises": [] },
+    { "date": "2026-08-14", "day_type": "rest", "title": "Recovery", "notes": null, "exercises": [] },
+    { "date": "2026-08-15", "day_type": "rest", "title": "Recovery", "notes": null, "exercises": [] },
+    { "date": "2026-08-16", "day_type": "rest", "title": "Recovery", "notes": null, "exercises": [] }
+  ]
+}

@@ -7,4 +7,4 @@ coverage/
 *.log
 .DS_Store
 .superdesign/tmp/
-/FREE_DEPLOYMENT_OPTIONS.md
+*.tsbuildinfo

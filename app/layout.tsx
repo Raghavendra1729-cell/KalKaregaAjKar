@@ -7,7 +7,7 @@ const dmMono = DM_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "
 
 export const metadata: Metadata = {
   title: { default: "Kal Karega, Aaj Kar", template: "%s · Kal Karega" },
-  description: "A private, calm Study and Gym planner.",
+  description: "Daily Study tasks and a simple seven-day Gym plan.",
   applicationName: "Kal Karega",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Kal Karega" },
 };

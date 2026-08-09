@@ -21,7 +21,7 @@ self.addEventListener("fetch", (event) => {
 self.addEventListener("push", (event) => {
   const data = event.data?.json() || {};
   event.waitUntil(self.registration.showNotification(data.title || "Kal Karega", {
-    body: data.body || "Your plan is ready.", icon: "/icons/icon-192.png", badge: "/icons/icon-192.png",
+    body: data.body || "Write down today’s tasks.", icon: "/icons/icon-192.png", badge: "/icons/icon-192.png",
     data: { url: data.url || "/study" }, vibrate: [120, 70, 120],
   }));
 });

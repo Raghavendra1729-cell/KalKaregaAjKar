@@ -1,15 +1,12 @@
 import webpush from "web-push";
 import { db } from "@/lib/db";
 
-export const maxDuration = 60;
-
 function localParts(timeZone: string) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-    weekday: "short",
     hour: "2-digit",
     minute: "2-digit",
     hourCycle: "h23",
@@ -19,7 +16,6 @@ function localParts(timeZone: string) {
   return {
     date: `${get("year")}-${get("month")}-${get("day")}`,
     time: `${get("hour")}:${get("minute")}`,
-    weekday: get("weekday"),
   };
 }
 
@@ -41,12 +37,10 @@ async function run(request: Request) {
   );
   const sql = db();
   const [settings] =
-    await sql`select *, to_char(study_reminder_time, 'HH24:MI') study_time,
-    to_char(gym_reminder_time, 'HH24:MI') gym_time from notification_settings where id = 1`;
+    await sql`select study_reminder_enabled, timezone, last_study_reminder,
+      to_char(study_reminder_time, 'HH24:MI') study_time
+      from notification_settings where id = 1`;
   const now = localParts(settings.timezone);
-  const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(
-    now.weekday,
-  );
   const messages: { title: string; body: string; url: string }[] = [];
   if (
     settings.study_reminder_enabled &&
@@ -54,24 +48,11 @@ async function run(request: Request) {
     settings.last_study_reminder !== now.date
   ) {
     messages.push({
-      title: "Plan tomorrow, calmly",
-      body: "Add or upload tomorrow’s Study plan before you wind down.",
-      url: "/study?day=tomorrow",
+      title: "Write today’s tasks",
+      body: "Take a minute to decide what needs doing today.",
+      url: "/study",
     });
     await sql`update notification_settings set last_study_reminder = ${now.date} where id = 1`;
-  }
-  if (
-    settings.gym_reminder_enabled &&
-    weekday === settings.gym_reminder_day &&
-    now.time >= settings.gym_time &&
-    settings.last_gym_reminder !== now.date
-  ) {
-    messages.push({
-      title: "Next gym week",
-      body: "Preview and save next week’s workout CSV.",
-      url: "/gym?tab=plan",
-    });
-    await sql`update notification_settings set last_gym_reminder = ${now.date} where id = 1`;
   }
   const subscriptions =
     await sql`select endpoint, subscription from push_subscriptions`;

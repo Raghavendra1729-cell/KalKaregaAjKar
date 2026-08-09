@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Kal Karega, Aaj Kar",
     short_name: "Kal Karega",
-    description: "Private Study and Gym plans, timers, history, and reminders.",
+    description: "Daily Study tasks and a simple seven-day Gym plan.",
     start_url: "/study",
     display: "standalone",
     background_color: "#F7F4EE",

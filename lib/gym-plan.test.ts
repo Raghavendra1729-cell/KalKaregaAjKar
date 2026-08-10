@@ -3,6 +3,15 @@ import { readFileSync } from "node:fs";
 import { gymPlanExample } from "@/lib/gym-plan-model";
 import { gymAiPrompt } from "@/lib/gym-plan-prompt";
 import { parseGymPlanJson } from "@/lib/gym-plan";
+import { isIsoDate } from "@/lib/dates";
+
+describe("ISO dates", () => {
+  it("rejects calendar rollovers while accepting real leap days", () => {
+    expect(isIsoDate("2026-02-29")).toBe(false);
+    expect(isIsoDate("2026-02-30")).toBe(false);
+    expect(isIsoDate("2028-02-29")).toBe(true);
+  });
+});
 
 describe("gym plan JSON", () => {
   it("accepts a complete seven-day versioned plan", () => {
@@ -44,6 +53,13 @@ describe("gym plan JSON", () => {
     const result = parseGymPlanJson(JSON.stringify(plan));
     expect(result.errors.some((error) => error.includes("Missing plan day"))).toBe(true);
     expect(result.errors.some((error) => error.includes("exactly once"))).toBe(true);
+  });
+
+  it("rejects an impossible plan start date", () => {
+    const plan = gymPlanExample("2026-08-12");
+    plan.plan_start = "2026-02-30";
+    const result = parseGymPlanJson(JSON.stringify(plan));
+    expect(result.errors.some((error) => error.includes("plan_start"))).toBe(true);
   });
 
   it("does not allow exercises on a rest day", () => {

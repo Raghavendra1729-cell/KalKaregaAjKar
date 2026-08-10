@@ -205,14 +205,9 @@ export async function getWorkoutWeek(
   const sql = db();
   const [week] = await sql`
     select w.id, w.plan_start::text as plan_start
-    from workout_weeks w
-    where w.plan_start = ${date}::date
-      or exists (
-        select 1 from workout_days d
-        where d.week_id = w.id and d.plan_date = ${date}::date
-      )
-    order by w.plan_start desc
-    limit 1`;
+    from workout_days d
+    join workout_weeks w on w.id = d.week_id
+    where d.plan_date = ${date}::date`;
   if (!week) return null;
 
   const days = await sql`
